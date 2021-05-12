@@ -1,0 +1,37 @@
+---
+- name: "{{ item.plugin_name_short }}: get latest version"
+  uri:
+    url: '{{ item.base_url }}{{ item.latest }}'
+    return_content: yes
+  register: web
+
+- name: "{{ item.plugin_name_short }}: set facts"
+  set_fact:
+    latest_file: "{{ web.content }}"
+    latest_ver: "{{ web.content|regex_search('git([0-9]+)', '\\1') }}"
+    ver_file: "{{ download_dir }}/{{ item.plugin_name }}_version"
+
+- name: "{{ item.plugin_name_short }}: check for previous files"
+  stat:
+    path: "{{ ver_file }}"
+  register: st
+
+- name: "{{ item.plugin_name_short }}: only update if version changed"
+  block:
+    - name: downlaod {{ item.plugin_name }}
+      get_url:
+        url: '{{ item.base_url }}{{ latest_file }}'
+        dest: /tmp
+
+    - name: "{{ item.plugin_name_short }}: unarchive"
+      unarchive:
+        src: /tmp/{{ latest_file }}
+        dest: "{{ download_dir }}"
+        copy: no
+
+    - name: "{{ item.plugin_name_short }}: update current version"
+      copy:
+        content: '{{ latest_ver }}'
+        dest: "{{ ver_file }}"
+
+  when: not st.stat.exists or lookup('file', ver_file)|from_yaml != latest_ver

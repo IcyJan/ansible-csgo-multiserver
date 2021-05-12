@@ -1,0 +1,7 @@
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  roles:
+    - fetch_mods
+  vars:
+    download_dir: "{{ playbook_dir }}/fetched_addons"
