@@ -1,4 +1,9 @@
 ---
+- name: "{{ item.plugin_name_short }}: create download_dir if necessary"
+  file:
+    path: '{{ download_dir }}'
+    state: directory
+
 - name: "{{ item.plugin_name_short }}: get latest version"
   uri:
     url: '{{ item.base_url }}{{ item.latest }}'
@@ -18,7 +23,7 @@
 
 - name: "{{ item.plugin_name_short }}: only update if version changed"
   block:
-    - name: downlaod {{ item.plugin_name }}
+    - name: "{{ item.plugin_name_short }}: download"
       get_url:
         url: '{{ item.base_url }}{{ latest_file }}'
         dest: /tmp

@@ -1,5 +1,5 @@
 ---
-- name: dwonload sourcemod and metamod
+- name: download sourcemod and metamod
   include_tasks: downloadMod.yml
   loop:
     - { plugin_name: 'metamod', plugin_name_short: 'MM', base_url: 'https://mms.alliedmods.net/mmsdrop/1.11/', latest: 'mmsource-latest-linux' }
