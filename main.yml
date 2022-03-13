@@ -5,3 +5,10 @@
     - fetch_mods
   vars:
     download_dir: "{{ playbook_dir }}/fetched_addons"
+
+- hosts: dev
+  gather_facts: False
+  roles:
+    - install_msm
+  vars:
+    apikey: "xxx"

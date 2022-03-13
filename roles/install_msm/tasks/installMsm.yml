@@ -1,0 +1,52 @@
+---
+- name: clone msm repo
+  git:
+    repo: https://github.com/dasisdormax/csgo-multiserver.git
+    dest: ~/csgo-multiserver
+    version: develop
+
+- name: symlink to csgo-server
+  file:
+    src: /home/{{ ansible_user }}/csgo-multiserver/csgo-server
+    dest: /usr/bin/csgo-server
+    state: link
+  become: True
+
+- name: install dependencies
+  apt:
+    pkg: ['sed', 'coreutils', 'wget', 'tar', 'git', 'expect', 'inotify-tools', 'tmux', 'unzip', 'jq', 'lib32gcc1', 'lib32stdc++6']
+    update_cache: yes
+    state: present
+  become: True
+
+- name: run msm setup
+  expect:
+    command: csgo-server setup
+    responses:
+      'Proceed\?': "Y"
+      '\> Import configuration from\?': ""
+      'Game Server Installation Directory': ""
+
+- name: create gslt config dir
+  file:
+    path: /home/{{ ansible_user }}/msm.d/csgo/addons/token-helper
+    state: directory
+
+- name: create gslt config
+  template:
+    src: token_config.sh.j2
+    dest: /home/{{ ansible_user }}/msm.d/csgo/addons/token-helper/config.sh
+
+- name: download csgo base async
+  command: csgo-server update
+  async: 1000
+  poll: 0
+  register: cs_dload
+
+- name: async download check
+  async_status:
+    jid: "{{ cs_dload.ansible_job_id }}"
+  register: job_result
+  until: job_result.finished
+  retries: 100
+  delay: 60
