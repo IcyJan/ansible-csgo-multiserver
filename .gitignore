@@ -1,2 +1,2 @@
-fetched_addons
+fetched_addons/*
 !fetched_addons/.gitkeep
