@@ -1,0 +1,15 @@
+---
+- name: load conf vars
+  include_vars:
+    file: "{{ playbook_dir }}/base_conf.yml"
+
+- name: create instances on node
+  vars:
+    instance_name: "{{ type }}{{ instance_nr }}"
+    server_instance_id: "{{ server_nr }}.{{ instance_nr }}"
+    conf_dir: "/home/{{ ansible_user }}/msm.d/csgo/cfg/inst/{{ instance_name }}"
+    instance_dir: "/home/{{ ansible_user }}/msm.d/csgo/inst/{{ instance_name }}"
+  include_tasks: createInstances.yml
+  with_sequence: count={{ nr }}
+  loop_control:
+    loop_var: instance_nr

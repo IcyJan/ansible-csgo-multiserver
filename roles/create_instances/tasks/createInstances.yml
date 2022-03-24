@@ -1,0 +1,24 @@
+---
+- name: create instance
+  command: csgo-server @{{ instance_name }} create
+
+- name: copy base conf
+  template:
+      src: '{{ item }}.j2'
+      dest: '{{ conf_dir }}/{{ item }}'
+  with_items: ['server.conf','gotv.conf']
+
+- name: copy base csgo folder
+  copy:
+      src: '{{ playbook_dir }}/cfgs/base/csgo'
+      dest: '{{ instance_dir }}'
+
+- name: copy type name.cfg
+  template:
+      src: '{{ playbook_dir }}/cfgs/{{ type }}/name.cfg.j2'
+      dest: '{{ instance_dir }}/csgo/cfg/name.cfg'
+
+- name: copy type csgo folder
+  copy:
+      src: '{{ playbook_dir }}/cfgs/{{ type }}/csgo'
+      dest: '{{ instance_dir }}'

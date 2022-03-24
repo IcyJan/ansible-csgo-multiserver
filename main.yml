@@ -10,5 +10,4 @@
   gather_facts: False
   roles:
     - install_msm
-  vars:
-    apikey: "xxx"
+    - { role: create_instances, type: 'example', nr: '2', start_port: 27015}

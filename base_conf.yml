@@ -1,0 +1,7 @@
+---
+conf:
+  api_key: "api_key"
+  pw:
+    rcon: "rcon_pw"
+    sv: "pw"
+    tv: "tv_pw"
