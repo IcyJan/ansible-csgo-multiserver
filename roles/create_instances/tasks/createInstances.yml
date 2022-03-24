@@ -9,9 +9,21 @@
   with_items: ['server.conf','gotv.conf']
 
 - name: copy base csgo folder
-  copy:
+  synchronize:
       src: '{{ playbook_dir }}/cfgs/base/csgo'
       dest: '{{ instance_dir }}'
+
+- name: check if mm sm required
+  stat:
+    path: '{{ playbook_dir }}/cfgs/{{ type }}/sm'
+  register: st
+  delegate_to: localhost
+
+- name: copy mm and sm if required
+  synchronize:
+      src: '{{ playbook_dir }}/fetched_addons/'
+      dest: '{{ instance_dir }}/csgo/'
+  when: st.stat.exists
 
 - name: copy type name.cfg
   template:
@@ -19,6 +31,6 @@
       dest: '{{ instance_dir }}/csgo/cfg/name.cfg'
 
 - name: copy type csgo folder
-  copy:
+  synchronize:
       src: '{{ playbook_dir }}/cfgs/{{ type }}/csgo'
       dest: '{{ instance_dir }}'
